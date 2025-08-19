@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Responsive Image Gallery</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 10px;
+      border: 3px solid white;
+      background: #080707;
+    }
+
+    h1 {
+      text-align: center;
+      background: pink;
+      padding: 20px;
+      color: white;
+    }
+
+    .filters {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .filters button {
+      margin: 0 10px;
+      padding: 15px 20px;
+      border: none;
+      background: #4d4949;
+      color: rgb(250, 246, 246);
+      cursor: pointer;
+    }
+
+    .filters button:hover {
+      background: #ff4343;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 25px;
+      padding: 30px;
+    }
+
+    .gallery .image img {
+      width: 100%;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+      border-radius: 10px;
+      border: 3px solid white;
+    }
+
+    .gallery .image img:hover {
+      transform: scale(1.05);
+    }
+
+    .lightbox {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      padding-top: 60px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(1, 1, 1, 0.9);
+    }
+
+    .lightbox-content {
+      margin: auto;
+      display: block;
+      max-width: 90%;
+      max-height: 80%;
+      transition: 0.3s;
+    }
+
+    .close {
+      position: absolute;
+      top: 15px;
+      right: 35px;
+      color: rgb(247, 242, 242);
+      font-size: 40px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .prev, .next {
+      cursor: pointer;
+      position: absolute;
+      top: 50%;
+      padding: 16px;
+      color: white;
+      font-size: 30px;
+      font-weight: bold;
+      background: rgba(0, 0, 0, 0.5);
+      border: none;
+      border-radius: 50%;
+      transform: translateY(-50%);
+    }
+
+    .prev {
+      left: 30px;
+    }
+
+    .next {
+      right: 30px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Image Gallery</h1>
+
+  <!-- Filter Buttons -->
+  <div class="filters">
+    <button onclick="filterImages('all')">All</button>
+    <button onclick="filterImages('nature')">Nature</button>
+    <button onclick="filterImages('travel')">Travel</button>
+    <button onclick="filterImages('architecture')">Architecture</button>
+  </div>
+
+  <!-- Gallery -->
+  <div class="gallery">
+    <div class="image nature"><img src="https://th.bing.com/th/id/R.783f7ea1ca692cbe5d76e3e93fb9733c?rik=2iYI%2f8gAq%2fHEvQ&riu=http%3a%2f%2fs1.picswalls.com%2fwallpapers%2f2016%2f03%2f29%2fbeautiful-nature-hd_04232357_304.jpg&ehk=BrzZ%2fimO%2bx8y9uJHNXRHof8cjIxNObl9FQgD5NV%2fjh8%3d&risl=&pid=ImgRaw&r=0" alt="Nature" onclick="openLightbox(this.src)" /></div>
+    <div class="image travel"><img src="https://images.pexels.com/photos/3278215/pexels-photo-3278215.jpeg?cs=srgb&dl=pexels-freestockpro-3278215.jpg&fm=jpg" alt="travel" onclick="openLightbox(this.src)" /></div>
+    <div class="image architecture"><img src="https://static.vecteezy.com/system/resources/previews/023/122/853/non_2x/modern-office-building-exterior-3d-render-business-architecture-concept-ai-generated-free-photo.jpg" alt="Architecture" onclick="openLightbox(this.src)" /></div>
+    <div class="image nature"><img src="https://wallpapers.com/images/featured/most-beautiful-nature-hdb30wtkjbn08xlf.jpg" alt="Nature" onclick="openLightbox(this.src)" /></div>
+    <div class="image travel "><img src="https://images.pexels.com/photos/346768/pexels-photo-346768.jpeg?cs=srgb&dl=backpack-blur-commuter-346768.jpg&fm=jpg" alt="Travel" onclick="openLightbox(this.src)" /></div>
+    <div class="image architecture"><img src="https://i.pinimg.com/originals/58/a5/5c/58a55c74bcd2e0b8a74604198164625f.jpg" alt="Architecture" onclick="openLightbox(this.src)" /></div>
+
+  </div>
+
+  <!-- Lightbox Modal -->
+  <div id="lightbox" class="lightbox">
+    <span class="close" onclick="closeLightbox()">&times;</span>
+    <img id="lightbox-img" class="lightbox-content" />
+    <button class="prev" onclick="changeImage(-1)">❮</button>
+    <button class="next" onclick="changeImage(1)">❯</button>
+  </div>
+
+  <script>
+    let currentImageIndex = 0;
+    const images = document.querySelectorAll('.gallery .image img');
+
+    function openLightbox(src) {
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      lightbox.style.display = 'block';
+      lightboxImg.src = src;
+      currentImageIndex = Array.from(images).findIndex(img => img.src === src);
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').style.display = 'none';
+    }
+
+    function changeImage(direction) {
+      currentImageIndex = (currentImageIndex + direction + images.length) % images.length;
+      document.getElementById('lightbox-img').src = images[currentImageIndex].src;
+    }
+
+    function filterImages(category) {
+      const allImages = document.querySelectorAll('.gallery .image');
+      allImages.forEach(img => {
+        if (category === 'all' || img.classList.contains(category)) {
+          img.style.display = 'block';
+        } else {
+          img.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>
